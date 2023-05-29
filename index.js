@@ -11,7 +11,6 @@ export class RangeWatcher {
 
     this._wasTruncated = false
 
-    this._lastEventEmittedPerLog = new Map()
     this._opening = this._ready()
 
     this._setLatestDiff = (ancestor) => {
