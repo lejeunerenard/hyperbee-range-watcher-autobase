@@ -15,9 +15,6 @@ export class RangeWatcher {
 
     this._setLatestDiff = (ancestor) => {
       this._wasTruncated = true
-      if (this.stream) {
-        this.stream.destroy()
-      }
       this.latestDiff = ancestor
     }
 
