@@ -34,7 +34,7 @@ export class RangeWatcher {
   async _run () {
     if (this.opened === false) await this._opening
 
-    this.bee.feed.off('append', this._runBound)
+    this.bee.core.off('append', this._runBound)
       .off('truncate', this._setLatestDiff)
 
     // TODO Using snapshot only supported with fix to linearize.js's session on snapshotted cores on linearizedcoresession class
@@ -47,7 +47,7 @@ export class RangeWatcher {
     this.stream = db.createDiffStream(this.latestDiff, this.range)
 
     // Setup truncate guard
-    this.bee.feed.once('truncate', this._setLatestDiff)
+    this.bee.core.once('truncate', this._setLatestDiff)
 
     for await (const node of this.stream) {
       if (this._wasTruncated) break
@@ -80,7 +80,7 @@ export class RangeWatcher {
       process.nextTick(this._run.bind(this))
     } else {
       // Setup hook to start again
-      this.bee.feed.once('append', this._runBound)
+      this.bee.core.once('append', this._runBound)
     }
 
     return this.stream
