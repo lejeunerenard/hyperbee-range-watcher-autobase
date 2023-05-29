@@ -21,7 +21,7 @@ key-based range for selectively
 ## Usage
 
 ```js
-import { RangeWatcher } from 'lejeunerenard/hyperbee-range-watcher-autobase'
+import { RangeWatcher } from '@lejeunerenard/hyperbee-range-watcher-autobase'
 const base = new Autobase({
   inputs: [inputA, inputB],
   localInput: inputA,
