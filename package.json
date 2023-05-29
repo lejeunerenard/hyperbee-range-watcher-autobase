@@ -1,0 +1,24 @@
+{
+  "name": "@lejeunerenard/hyperbee-range-watcher-autobase",
+  "version": "1.0.0",
+  "description": "Watch for changes in a hyperbee built on an autobase",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.41.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "dependencies": {
+    "autobase": "github:lejeunerenard/autobase#merge-fix-session-and-apply",
+    "hyperbee": "^2.12.0"
+  }
+}
