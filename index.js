@@ -18,7 +18,10 @@ export class RangeWatcher {
       this.latestDiff = ancestor
     }
 
-    this._runBound = this._run.bind(this)
+    this._runBound = async () => {
+      this._currentRun = this._run()
+      return this._currentRun
+    }
     this._runBound()
   }
 
@@ -73,12 +76,20 @@ export class RangeWatcher {
     }
 
     if (this.bee.version !== db.version || this._wasTruncated) {
-      process.nextTick(this._run.bind(this))
+      await this._runBound()
     } else {
       // Setup hook to start again
       this.bee.core.once('append', this._runBound)
     }
 
     return this.stream
+  }
+
+  async update () {
+    await this._ready()
+    await this.bee.update()
+    if (this.bee.version !== this.latestDiff) {
+      await this._currentRun
+    }
   }
 }
