@@ -21,23 +21,23 @@ key-based range for selectively
 ## Usage
 
 ```js
+import Hyperbee from 'hyperbee'
 import { RangeWatcher } from '@lejeunerenard/hyperbee-range-watcher-autobase'
-const base = new Autobase({
-  inputs: [inputA, inputB],
-  localInput: inputA,
-  localOutput: outputA,
-  autostart: true,
+
+const base = new Autobase(store, bootstrapKey, {
   valueEncoding: 'json',
-  unwrap: true,
-  view: (core) => new Hyperbee(core.unwrap(), {
-    keyEncoding: 'utf-8',
-    valueEncoding: 'json',
-    extension: false
-  }),
-  apply: async (bee, batch) => {
+  open: (store) => {
+    const core = store.get('view', { valueEncoding: 'json' })
+    return new Hyperbee(core, {
+      keyEncoding: 'utf-8',
+      valueEncoding: 'json',
+      extension: false
+    })
+  },
+  apply: async (batch, bee, base) => {
     const b = bee.batch({ update: false })
     for (const node of batch) {
-      const info = JSON.parse(node.value)
+      const info = node.value
       if (info.type === 'put') {
         await b.put(info.key, info.value)
       } else if (info.type === 'del') {
@@ -52,21 +52,21 @@ new RangeWatcher(base.view, { gte: 'b' }, null, async (node) => {
   console.log('hyperbee update node', node)
 })
 
-await base.append(JSON.stringify({
+await base.append({
   type: 'put',
   key: 'bar',
   value: 'buzz'
-}))
+})
 
-await base.append(JSON.stringify({
+await base.append({
   type: 'del',
   key: 'bar'
-}))
+})
 
-await base.append(JSON.stringify({
+await base.append({
   type: 'put',
   key: 'foo'
-}))
+})
 ```
 
 ## API

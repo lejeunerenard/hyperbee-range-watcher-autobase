@@ -11,6 +11,8 @@
   "author": "Sean Zellmer <sean@lejeunerenard.com> (http://lejeunerenard.com/)",
   "license": "MIT",
   "devDependencies": {
+    "autobase": "^6.0.0-rc6",
+    "corestore": "^6.18.1",
     "eslint": "^8.41.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",
@@ -21,7 +23,6 @@
     "tape": "^5.7.5"
   },
   "dependencies": {
-    "autobase": "github:lejeunerenard/autobase#merge-fix-session-and-apply",
     "hyperbee": "^2.12.0"
   }
 }

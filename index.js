@@ -36,7 +36,6 @@ export class RangeWatcher {
     this.bee.core.off('append', this._runBound)
       .off('truncate', this._setLatestDiff)
 
-    // TODO Using snapshot only supported with fix to linearize.js's session on snapshotted cores on linearizedcoresession class
     const db = this.bee.snapshot()
 
     // // Show versions being diffed
