@@ -1,6 +1,6 @@
 {
   "name": "@lejeunerenard/hyperbee-range-watcher-autobase",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Watch for changes in a hyperbee built on an autobase",
   "main": "index.js",
   "type": "module",
