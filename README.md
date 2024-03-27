@@ -89,6 +89,10 @@ looks like this:
 }
 ```
 
+`await watcher.update()`
+
+Update `bee` and wait the current run checking for differences on the `range`.
+
 ### Example
 
 `new RangeWatcher(bee, {}, null, ({ type, key, value }) => {
