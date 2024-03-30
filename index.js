@@ -5,7 +5,7 @@ export class RangeWatcher {
     this.opened = false
 
     this.range = range
-    this.latestDiff = latestDiff !== undefined ? latestDiff : this.bee.version
+    this.latestDiff = (!!latestDiff || latestDiff === 0) ? latestDiff : this.bee.version
     this.cb = cb
     this.stream = null
 
