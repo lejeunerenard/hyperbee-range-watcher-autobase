@@ -69,7 +69,7 @@ await base.append({
 
 ## API
 
-`const watcher = new RangeWatcher(bee, range, startingVersion = bee.version, callback)`
+### `const watcher = new RangeWatcher(bee, range, startingVersion = bee.version, callback)`
 
 Creates a watcher that watches for changes on `bee` with `range` starting at
 `startingVersion` calling `callback` with each change.
@@ -87,16 +87,18 @@ looks like this:
 }
 ```
 
-`await watcher.update()`
+#### Example
 
-Update `bee` and wait the current run checking for differences on the `range`.
-
-### Example
-
-`new RangeWatcher(bee, {}, null, ({ type, key, value }) => {
+```
+new RangeWatcher(bee, {}, null, ({ type, key, value }) => {
   if (type === 'put') {
     console.log('key', key, 'set to', value)
   } else { // type === 'del'
     console.log('key', key, 'was deleted and previously had the value', value)
   }
-})`
+})
+```
+
+### `await watcher.update()`
+
+Update `bee` and wait the current run checking for differences on the `range`.
