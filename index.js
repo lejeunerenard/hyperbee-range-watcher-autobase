@@ -1,22 +1,17 @@
+import HyperBeeDiffStream from 'hyperbee-diff-stream'
+
 export class RangeWatcher {
-  constructor (bee, range, latestDiff, cb) {
+  constructor (bee, range, latest, cb) {
     this.bee = bee
 
     this.opened = false
 
     this.range = range
-    this.latestDiff = (!!latestDiff || latestDiff === 0) ? latestDiff : this.bee.version
+    this.latest = latest || this.bee.snapshot()
     this.cb = cb
     this.stream = null
 
-    this._wasTruncated = false
-
     this._opening = this._ready()
-
-    this._setLatestDiff = (ancestor) => {
-      this._wasTruncated = true
-      this.latestDiff = ancestor
-    }
 
     this._runBound = async () => {
       this._currentRun = this._run()
@@ -33,23 +28,11 @@ export class RangeWatcher {
   async _run () {
     if (this.opened === false) await this._opening
 
-    this.bee.core.off('append', this._runBound)
-      .off('truncate', this._setLatestDiff)
-
     const db = this.bee.snapshot()
 
-    // // Show versions being diffed
-    // console.log('this.latestDiff', this.latestDiff, 'vs db.version', db.version)
-
-    this._wasTruncated = false
-    this.stream = db.createDiffStream(this.latestDiff, this.range)
-
-    // Setup truncate guard
-    this.bee.core.once('truncate', this._setLatestDiff)
+    this.stream = new HyperBeeDiffStream(this.latest, db, { closeSnapshots: false, ...this.range })
 
     for await (const node of this.stream) {
-      if (this._wasTruncated) break
-
       let key
       let value
       let type = 'put'
@@ -70,11 +53,9 @@ export class RangeWatcher {
       await this.cb({ type, key, value })
     }
 
-    if (!this._wasTruncated) {
-      this.latestDiff = db.version // Update latest
-    }
+    this.latest = db
 
-    if (this.bee.version !== db.version || this._wasTruncated) {
+    if (this.bee.version !== db.version) {
       await this._runBound()
     } else {
       // Setup hook to start again
@@ -87,7 +68,7 @@ export class RangeWatcher {
   async update () {
     await this._ready()
     await this.bee.update()
-    if (this.bee.version !== this.latestDiff) {
+    if (this.bee.version !== this.latest.version) {
       await this._currentRun
     }
   }

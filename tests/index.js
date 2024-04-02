@@ -6,27 +6,7 @@ import b4a from 'b4a'
 import { RangeWatcher } from '../index.js'
 
 test('constructor', (t) => {
-  t.test('takes latestDiff = 0', async (t) => {
-    const core = new Hypercore(RAM)
-    const bee = new Hyperbee(core, { valueEncoding: 'json' })
-    await bee.ready()
-
-    await bee.put('beep', 1)
-    await bee.put('boop', 2)
-
-    const seen = new Map()
-    const watcher = new RangeWatcher(bee, {}, 0, (node) => {
-      seen.set(b4a.toString(node.key), 1)
-    })
-
-    t.equal(watcher.latestDiff, 0, 'latestDiff = 0')
-
-    await watcher.update()
-
-    t.deepEquals([...seen.keys()], ['beep', 'boop'])
-  })
-
-  t.test('takes latestDiff = null|undefined', async (t) => {
+  t.test('takes latest = null|undefined', async (t) => {
     t.test('null', async (t) => {
       const core = new Hypercore(RAM)
       const bee = new Hyperbee(core, { valueEncoding: 'json' })
@@ -34,13 +14,14 @@ test('constructor', (t) => {
 
       await bee.put('beep', 1)
       await bee.put('boop', 2)
+      const setupVersion = bee.version
 
       const seen = new Map()
       const watcher = new RangeWatcher(bee, {}, null, (node) => {
         seen.set(b4a.toString(node.key), 1)
       })
 
-      t.equal(watcher.latestDiff, 3, 'latestDiff = null')
+      t.equal(watcher.latest.version, setupVersion, 'latest version = bee version')
 
       await watcher.update()
 
@@ -59,13 +40,14 @@ test('constructor', (t) => {
 
       await bee.put('beep', 1)
       await bee.put('boop', 2)
+      const setupVersion = bee.version
 
       const seen = new Map()
       const watcher = new RangeWatcher(bee, {}, undefined, (node) => {
         seen.set(b4a.toString(node.key), 1)
       })
 
-      t.equal(watcher.latestDiff, 3, 'latestDiff = null')
+      t.equal(watcher.latest.version, setupVersion, 'latest version = bee version')
 
       await watcher.update()
 
