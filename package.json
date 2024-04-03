@@ -12,6 +12,7 @@
   "license": "MIT",
   "devDependencies": {
     "autobase": "^6.0.0-rc6",
+    "autobase-test-helpers": "^2.1.0",
     "corestore": "^6.18.1",
     "eslint": "^8.41.0",
     "eslint-config-standard": "^17.0.0",

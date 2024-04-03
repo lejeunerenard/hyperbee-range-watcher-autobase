@@ -30,31 +30,35 @@ export class RangeWatcher {
 
     const db = this.bee.snapshot()
 
-    this.stream = new HyperBeeDiffStream(this.latest, db, { closeSnapshots: false, ...this.range })
+    if (db.version > this.latest.version) {
+      this.stream = new HyperBeeDiffStream(this.latest, db, { closeSnapshots: false, ...this.range })
 
-    for await (const node of this.stream) {
-      let key
-      let value
-      let type = 'put'
-      // Diff stream
-      if ('left' in node || 'right' in node) {
-        if (node.left) {
-          key = node.left.key
-          value = node.left.value
-        } else {
-          key = node.right.key
-          value = node.right.value
-        }
+      for await (const node of this.stream) {
+        let key
+        let value
+        let type = 'put'
+        // Diff stream
+        if ('left' in node || 'right' in node) {
+          if (node.left) {
+            key = node.left.key
+            value = node.left.value
+          } else {
+            key = node.right.key
+            value = node.right.value
+          }
 
-        if (!node.left && node.right) {
-          type = 'del'
+          if (!node.left && node.right) {
+            type = 'del'
+          }
         }
+        await this.cb({ type, key, value })
       }
-      await this.cb({ type, key, value })
+
+      // TODO decide if this is necessary.
+      // Seems at least a good idea.
+      await this.latest.close()
+      this.latest = db
     }
-
-    this.latest = db
-
     if (this.bee.version !== db.version) {
       await this._runBound()
     } else {
