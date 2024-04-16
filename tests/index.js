@@ -120,6 +120,24 @@ test('constructor', (t) => {
   })
 })
 
+test('triggers on optional value nodes', async (t) => {
+  const core = new Hypercore(RAM)
+  const bee = new Hyperbee(core, { valueEncoding: 'json' })
+  await bee.ready()
+
+  const seen = new Map()
+  const watcher = new RangeWatcher(bee, {}, undefined, (node) => {
+    seen.set(b4a.toString(node.key), 1)
+  })
+
+  await bee.put('beep', null)
+  await bee.put('boop', null)
+
+  await watcher.update()
+
+  t.deepEquals([...seen.keys()], ['beep', 'boop'])
+})
+
 test('update', (t) => {
   t.test('awaits 2nd run', async (t) => {
     const core = new Hypercore(RAM)

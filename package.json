@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "hyperbee": "^2.12.0",
-    "hyperbee-diff-stream": "^1.0.2"
+    "hyperbee-diff-stream": "github:lejeunerenard/hyperbee-diff-stream#fix-optional-values"
   }
 }
