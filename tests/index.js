@@ -158,6 +158,35 @@ test('update', (t) => {
   })
 })
 
+test('close', async (t) => {
+  const core = new Hypercore(RAM)
+  const bee = new Hyperbee(core, { valueEncoding: 'json' })
+  await bee.ready()
+
+  const seen = new Map()
+  let shouldFail = false
+  const watcher = new RangeWatcher(bee, {}, undefined, (node) => {
+    if (shouldFail) t.fail('triggered callback after closing')
+
+    seen.set(b4a.toString(node.key), 1)
+  })
+
+  await bee.put('beep', 1)
+  await bee.put('boop', 2)
+
+  await watcher.update()
+
+  t.deepEquals([...seen.keys()], ['beep', 'boop'])
+
+  shouldFail = true
+  await watcher.close()
+
+  await bee.put('baz', 3)
+  await watcher.update()
+
+  t.deepEquals([...seen.keys()], ['beep', 'boop'], 'didnt add key after closing')
+})
+
 const open = (store) => {
   const core = store.get('view')
   return new Hyperbee(core, { extension: false })

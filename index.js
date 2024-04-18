@@ -5,6 +5,7 @@ export class RangeWatcher {
     this.bee = bee
 
     this.opened = false
+    this._closed = false
 
     this.range = range
     this.latest = latest || this.bee.snapshot()
@@ -27,6 +28,7 @@ export class RangeWatcher {
 
   async _run () {
     if (this.opened === false) await this._opening
+    if (this._closed) return
 
     const db = this.bee.snapshot()
 
@@ -34,6 +36,7 @@ export class RangeWatcher {
       this.stream = new HyperBeeDiffStream(this.latest, db, { closeSnapshots: false, ...this.range })
 
       for await (const node of this.stream) {
+        if (this._closed) return
         let key
         let value
         let type = 'put'
@@ -75,5 +78,10 @@ export class RangeWatcher {
     if (this.bee.version !== this.latest.version) {
       await this._currentRun
     }
+  }
+
+  close () {
+    this._closed = true
+    return this.latest.close()
   }
 }
