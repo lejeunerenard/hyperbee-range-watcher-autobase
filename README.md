@@ -5,16 +5,11 @@ is similar to `db.watch([range])` but returns the entries that change instead of
 snapshots of the hyperbee. This module is for if you want to watch the changes
 of a given range and work with the new values.
 
-Some quirks to consider when building with Hyperbee Range Watcher:
-
-- `RangeWatcher` will repeat keys updates in cases where the hyperbee is built
-  on autobase and it reorders the input logs when linearizing.
-- Some updates to keys will be skipped if the key is updated multiple times in a
-  single update batch of autobase's view. This is because in order to support
-  a key-based range for selectively a diff stream is used under the hood. Diff
-  streams only yield the difference between two versions which includes all the
-  changes as one update. In practice an actively update autobase hyperbee will
-  include each update as they happen.
+Some updates to keys will be skipped if the key is updated multiple times in
+a single update batch. This is because hyperbee-range-watcher is built on a
+diff stream under the hood. Diff streams only yield the difference between two
+versions which includes all the changes as one update. In practice an actively
+update hyperbee will include each update as they happen.
 
 ## Usage
 
